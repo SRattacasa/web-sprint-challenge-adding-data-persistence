@@ -9,17 +9,13 @@ const getResources = () => {
    return db.select("*").from("resources")
 }
 
-const getTasks = () => { 
-   return db.select("*").from("tasks")
+// get the tasks table back, join it with the projects table and then select some fields to give back to the requests as per MVP
+const getTasks = id => { 
+   return db("tasks")
+   .join("projects as p", "p.id", "tasks.id")
+   .select("p.project_name", "p.description", "tasks.task_description", "tasks.id", "tasks.completed")
 }
 
-const getProjectID =  (id) => { 
-  return db.select("*").from("projects").where("id", id)
-}
-
-const getResourcesID =  (id) => { 
-  return db.select("*").from("resources").where("id", id)
-}
 
 const addProject = project => {
     return db("projects").insert(project)
@@ -34,33 +30,10 @@ const addResource = resource => {
 }
 
 
-const findSteps =  (id) => { 
-    return db("projects")
-    .innerJoin("Steps", "Schemes.id", "Steps.scheme_id")
-    .where("Schemes.id", id)
-    .select("Steps.step_number", "Steps.instructions")
-    .orderBy("Steps.step_number")
-}
-
-const add = (project) => {
-    return db("projects").insert(project)
-}
-
-const remove = id => {
-    return db("projects").where("projects.id", id).delete()
-}
-
-const update = (changes, id) => {
-    return db("projects")
-      .where( "projects.id", id )
-      .update(changes)
-  }
 
 module.exports = {
     getProjects, 
-    getProjectID,
     getResources,
-    getResourcesID,
     getTasks,
     addProject,
     addTask,
